@@ -16,24 +16,24 @@ namespace SaveLockscreenImage
         {
             try
             {
-                NameValueCollection appSettings = ConfigurationManager.AppSettings;
-                string source = appSettings.Get("sourceFolder");
+                var appSettings = ConfigurationManager.AppSettings;
+                var source = appSettings.Get("sourceFolder");
 
                 // If source folder is empty, guess it then save it
                 if (string.IsNullOrEmpty(source))
                 {
-                    string appDataLocal = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                    string assetPath = appSettings.Get("assetPath");
+                    var appDataLocal = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                    var assetPath = appSettings.Get("assetPath");
                     source = Path.Combine(appDataLocal, assetPath);
 
-                    Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+                    var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
                     config.AppSettings.Settings.Remove("sourceFolder");
                     config.AppSettings.Settings.Add("sourceFolder", source);
                     config.Save(ConfigurationSaveMode.Modified);
                 }
 
-                string dest = appSettings.Get("destFolder");
-                bool isErr = !Directory.Exists(source);
+                var dest = appSettings.Get("destFolder");
+                var isErr = !Directory.Exists(source);
 
                 if (isErr)
                 {
@@ -52,7 +52,7 @@ namespace SaveLockscreenImage
                         long minFileSize;
                         long.TryParse(appSettings.Get("minFileSizeInByte"), out minFileSize);
                         // Copy files
-                        string tempFolderPath = CopyAsset(source, dest, minFileSize);
+                        var tempFolderPath = CopyAsset(source, dest, minFileSize);
 
                         int minImageWidth;
                         int.TryParse(appSettings.Get("minImageWidth"), out minImageWidth);
@@ -60,7 +60,7 @@ namespace SaveLockscreenImage
                         SaveImage(tempFolderPath, minImageWidth);
 
                         // Delete duplicate files
-                        string deleteDuplicate = appSettings.Get("deleteDuplicate");
+                        var deleteDuplicate = appSettings.Get("deleteDuplicate");
                         if (deleteDuplicate.Equals("true"))
                         {
                             DeleteDuplicateImage(dest);
@@ -90,16 +90,16 @@ namespace SaveLockscreenImage
         /// <param name="dest">Destination folder's path</param>
         private static void DeleteDuplicateImage(string dest)
         {
-            MD5 md5 = MD5.Create();
+            var md5 = MD5.Create();
             IEnumerable<FileInfo> orderedFiles = Directory.EnumerateFiles(dest).Select(path => new FileInfo(path)).OrderBy(file => file.Length);
             IList<FileInfo> fileList = orderedFiles as IList<FileInfo> ?? orderedFiles.ToList();
-            int startIndex = fileList.Count - 1;
-            int fileCount = 0;
+            var startIndex = fileList.Count - 1;
+            var fileCount = 0;
 
-            for (int i = startIndex; i > 0; i--)
+            for (var i = startIndex; i > 0; i--)
             {
-                FileInfo prevFile = fileList.ElementAt(i - 1);
-                FileInfo nextFile = fileList.ElementAt(i);
+                var prevFile = fileList.ElementAt(i - 1);
+                var nextFile = fileList.ElementAt(i);
 
                 // When 2 files 1 size
                 if (prevFile.Length == nextFile.Length)
@@ -107,8 +107,8 @@ namespace SaveLockscreenImage
                     string deletePath = null;
 
                     // Get 2 hash
-                    FileStream prevStream = File.OpenRead(prevFile.FullName);
-                    FileStream nextStream = File.OpenRead(nextFile.FullName);
+                    var prevStream = File.OpenRead(prevFile.FullName);
+                    var nextStream = File.OpenRead(nextFile.FullName);
                     byte[] prevHash = md5.ComputeHash(prevStream);
                     byte[] nextHash = md5.ComputeHash(nextStream);
                     prevStream.Dispose();
@@ -147,18 +147,18 @@ namespace SaveLockscreenImage
         private static void SaveImage(string tempFolderPath, int minImageWidth)
         {
             string[] fileList = Directory.GetFiles(tempFolderPath);
-            string parentFolderPath = new DirectoryInfo(tempFolderPath).Parent.FullName;
-            int fileCount = 0;
+            var parentFolderPath = new DirectoryInfo(tempFolderPath).Parent.FullName;
+            var fileCount = 0;
 
-            foreach (string s in fileList)
+            foreach (var s in fileList)
             {
-                Image img = Image.FromFile(s);
+                var img = Image.FromFile(s);
 
                 // Check image's width
                 if (img.Width >= minImageWidth)
                 {
                     img.Dispose();
-                    string newFilePath = Path.Combine(parentFolderPath, s.Substring(s.LastIndexOf("\\", StringComparison.Ordinal) + 1));
+                    var newFilePath = Path.Combine(parentFolderPath, s.Substring(s.LastIndexOf("\\", StringComparison.Ordinal) + 1));
 
                     if (!File.Exists(newFilePath))
                     {
@@ -186,22 +186,22 @@ namespace SaveLockscreenImage
         /// <returns>Temp folder's path</returns>
         private static string CopyAsset(string source, string dest, long minFileSize)
         {
-            DirectoryInfo destFolder = new DirectoryInfo(dest);
+            var destFolder = new DirectoryInfo(dest);
 
             // Create temp folder inside destination folder
-            DirectoryInfo tempFolder = destFolder.CreateSubdirectory(DateTime.Now.Ticks.ToString());
-            string tempFolderPath = tempFolder.FullName;
+            var tempFolder = destFolder.CreateSubdirectory(DateTime.Now.Ticks.ToString());
+            var tempFolderPath = tempFolder.FullName;
             string[] fileList = Directory.GetFiles(source);
-            int fileCount = 0;
+            var fileCount = 0;
 
             // Copy files to temp folder
-            foreach (string s in fileList)
+            foreach (var s in fileList)
             {
-                FileInfo file = new FileInfo(s);
+                var file = new FileInfo(s);
 
                 if (file.Length > minFileSize)
                 {
-                    string tmp = Path.Combine(tempFolderPath, file.Name + ".jpg");
+                    var tmp = Path.Combine(tempFolderPath, file.Name + ".jpg");
                     File.Copy(s, tmp);
                     fileCount++;
                 }
