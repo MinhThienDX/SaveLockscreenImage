@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Configuration;
 using System.IO;
 using System.Drawing;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Threading;
 using Microsoft.VisualBasic.FileIO;
 
 namespace SaveLockscreenImage
@@ -14,9 +14,9 @@ namespace SaveLockscreenImage
     {
         private static void Main()
         {
+            var appSettings = ConfigurationManager.AppSettings;
             try
             {
-                var appSettings = ConfigurationManager.AppSettings;
                 var source = appSettings.Get("sourceFolder");
 
                 // If source folder is empty, guess it then save it
@@ -67,6 +67,15 @@ namespace SaveLockscreenImage
                         }
                     }
                 }
+
+                Console.Write("Exit sequence commencing");
+                var tmp = appSettings.Get("exitTimeout");
+                long timeout;
+                long.TryParse(tmp, out timeout);
+                if (timeout > 1)
+                {
+                    ProcessExit(timeout);
+                }
             }
             catch (Exception e)
             {
@@ -76,10 +85,6 @@ namespace SaveLockscreenImage
                 Console.WriteLine(e);
                 Console.WriteLine("=================================================================================================");
                 Console.WriteLine("End of exception");
-            }
-            finally
-            {
-                Console.WriteLine("Would you kindly press Enter to exit");
                 Console.ReadLine();
             }
         }
@@ -209,6 +214,20 @@ namespace SaveLockscreenImage
 
             Console.WriteLine("Finish copy " + fileCount + " file(s) from asset folder");
             return tempFolderPath;
+        }
+
+        /// <summary>
+        /// Commence exit sequence
+        /// </summary>
+        /// <param name="exitTimeout">Exit timeout in seconds</param>
+        private static void ProcessExit(long exitTimeout)
+        {
+            var count = exitTimeout - 1;
+            for (var i = count; i > 0; i--)
+            {
+                Console.Write("\n" + i);
+                Thread.Sleep(1000);
+            }
         }
     }
 }
