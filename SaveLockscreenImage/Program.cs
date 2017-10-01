@@ -1,77 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Configuration;
 using System.IO;
 using System.Drawing;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Security.Cryptography;
 using System.Threading;
 using Microsoft.VisualBasic.FileIO;
 
 namespace SaveLockscreenImage
 {
+    /// <summary>
+    /// This program save Windows 10's lockscreen image
+    /// </summary>
     internal class Program
     {
+        private const string DEST_FOLDER = "Lockscreen";
+
         private static void Main()
         {
-            var appSettings = ConfigurationManager.AppSettings;
             try
             {
-                var source = appSettings.Get("sourceFolder");
+                var appSettings = ConfigurationManager.AppSettings;
+                var source = GetSourcePath(appSettings);
+                var dest = GetDestinationPath(appSettings);
 
-                // If source folder is empty, guess it then save it
-                if (string.IsNullOrEmpty(source))
-                {
-                    var appDataLocal = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                    var assetPath = appSettings.Get("assetPath");
-                    source = Path.Combine(appDataLocal, assetPath);
-
-                    var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-                    config.AppSettings.Settings.Remove("sourceFolder");
-                    config.AppSettings.Settings.Add("sourceFolder", source);
-                    config.Save(ConfigurationSaveMode.Modified);
-                }
-
-                var dest = appSettings.Get("destFolder");
-                var isErr = !Directory.Exists(source);
-
-                if (isErr)
+                if (!Directory.Exists(source))
                 {
                     Console.WriteLine("Source folder does not exist");
                 }
                 else
                 {
-                    isErr = !Directory.Exists(dest);
-
-                    if (isErr)
-                    {
-                        Console.WriteLine("Destination folder does not exist");
-                    }
-                    else
-                    {
-                        long minFileSize;
-                        long.TryParse(appSettings.Get("minFileSizeInByte"), out minFileSize);
-                        // Copy files
-                        var tempFolderPath = CopyAsset(source, dest, minFileSize);
-
-                        int minImageWidth;
-                        int.TryParse(appSettings.Get("minImageWidth"), out minImageWidth);
-                        // Move copied files
-                        SaveImage(tempFolderPath, minImageWidth);
-
-                        // Delete duplicate files
-                        var deleteDuplicate = appSettings.Get("deleteDuplicate");
-                        if (deleteDuplicate.Equals("true"))
-                        {
-                            DeleteDuplicateImage(dest);
-                        }
-                    }
+                    SaveNow(appSettings, source, dest);
                 }
 
                 Console.Write("Exit sequence commencing");
                 var tmp = appSettings.Get("exitTimeout");
                 long timeout;
                 long.TryParse(tmp, out timeout);
+
                 if (timeout > 1)
                 {
                     ProcessExit(timeout);
@@ -87,6 +56,83 @@ namespace SaveLockscreenImage
                 Console.WriteLine("End of exception");
                 Console.ReadLine();
             }
+        }
+
+        /// <summary>
+        /// Save those lockscreen NOW
+        /// </summary>
+        /// <param name="appSettings">ConfigurationManager.AppSettings</param>
+        /// <param name="source">Source folder path</param>
+        /// <param name="dest">Destination folder path</param>
+        private static void SaveNow(NameValueCollection appSettings, string source, string dest)
+        {
+            long minFileSize;
+            long.TryParse(appSettings.Get("minFileSizeInByte"), out minFileSize);
+            // Copy files
+            var tempFolderPath = CopyAsset(source, dest, minFileSize);
+
+            int minImageWidth;
+            int.TryParse(appSettings.Get("minImageWidth"), out minImageWidth);
+            // Move copied files
+            SaveImage(tempFolderPath, minImageWidth);
+
+            // Delete duplicate files
+            var deleteDuplicate = appSettings.Get("deleteDuplicate");
+
+            if (deleteDuplicate.Equals("true"))
+            {
+                DeleteDuplicateImage(dest);
+            }
+        }
+
+        /// <summary>
+        /// Get source folder path
+        /// </summary>
+        /// <param name="appSettings">ConfigurationManager.AppSettings</param>
+        /// <returns>Source folder path</returns>
+        private static string GetSourcePath(NameValueCollection appSettings)
+        {
+            var source = appSettings.Get("sourceFolder");
+
+            // If source path is empty, guess it
+            if (string.IsNullOrEmpty(source))
+            {
+                var appDataLocal = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                var assetPath = appSettings.Get("assetPath");
+                source = Path.Combine(appDataLocal, assetPath);
+
+                // Then save source folder to config
+                var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+                config.AppSettings.Settings.Remove("sourceFolder");
+                config.AppSettings.Settings.Add("sourceFolder", source);
+                config.Save(ConfigurationSaveMode.Modified);
+            }
+
+            return source;
+        }
+
+        /// <summary>
+        /// Get destination folder path
+        /// </summary>
+        /// <param name="appSettings">ConfigurationManager.AppSettings</param>
+        /// <returns>Destination folder path</returns>
+        private static string GetDestinationPath(NameValueCollection appSettings)
+        {
+            var dest = appSettings.Get("destFolder");
+
+            // If destination path is empty, place it on desktop
+            if (string.IsNullOrEmpty(dest))
+            {
+                dest = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), DEST_FOLDER);
+            }
+
+            // If destination folder doesn't exist, make it exist
+            if (!Directory.Exists(dest))
+            {
+                Directory.CreateDirectory(dest);
+            }
+
+            return dest;
         }
 
         /// <summary>
@@ -223,6 +269,7 @@ namespace SaveLockscreenImage
         private static void ProcessExit(long exitTimeout)
         {
             var count = exitTimeout - 1;
+
             for (var i = count; i > 0; i--)
             {
                 Console.Write("\n" + i);
