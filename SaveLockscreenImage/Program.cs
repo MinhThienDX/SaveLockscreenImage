@@ -15,11 +15,11 @@ namespace SaveLockscreenImage
     /// <summary>
     /// This program save Windows 10's lockscreen image
     /// </summary>
-    internal class Program
+    public class Program
     {
         private const string DEST_FOLDER = "Lockscreen";
 
-        private static void Main()
+        public static void Main()
         {
             try
             {
@@ -64,7 +64,7 @@ namespace SaveLockscreenImage
         /// <param name="appSettings">ConfigurationManager.AppSettings</param>
         /// <param name="source">Source folder path</param>
         /// <param name="dest">Destination folder path</param>
-        private static void SaveNow(NameValueCollection appSettings, string source, string dest)
+        public static void SaveNow(NameValueCollection appSettings, string source, string dest)
         {
             long minFileSize;
             long.TryParse(appSettings.Get("minFileSizeInByte"), out minFileSize);
@@ -90,7 +90,7 @@ namespace SaveLockscreenImage
         /// </summary>
         /// <param name="appSettings">ConfigurationManager.AppSettings</param>
         /// <returns>Source folder path</returns>
-        private static string GetSourcePath(NameValueCollection appSettings)
+        public static string GetSourcePath(NameValueCollection appSettings)
         {
             var source = appSettings.Get("sourceFolder");
 
@@ -116,7 +116,7 @@ namespace SaveLockscreenImage
         /// </summary>
         /// <param name="appSettings">ConfigurationManager.AppSettings</param>
         /// <returns>Destination folder path</returns>
-        private static string GetDestinationPath(NameValueCollection appSettings)
+        public static string GetDestinationPath(NameValueCollection appSettings)
         {
             var dest = appSettings.Get("destFolder");
 
@@ -139,7 +139,7 @@ namespace SaveLockscreenImage
         /// Delete duplicate images in destination folder
         /// </summary>
         /// <param name="dest">Destination folder's path</param>
-        private static void DeleteDuplicateImage(string dest)
+        public static void DeleteDuplicateImage(string dest)
         {
             var md5 = MD5.Create();
             IEnumerable<FileInfo> orderedFiles = Directory.EnumerateFiles(dest).Select(path => new FileInfo(path)).OrderBy(file => file.Length);
@@ -195,7 +195,7 @@ namespace SaveLockscreenImage
         /// </summary>
         /// <param name="tempFolderPath">Temp folder's path</param>
         /// <param name="minImageWidth">Minimum image's width to process</param>
-        private static void SaveImage(string tempFolderPath, int minImageWidth)
+        public static void SaveImage(string tempFolderPath, int minImageWidth)
         {
             string[] fileList = Directory.GetFiles(tempFolderPath);
             var parentFolderPath = new DirectoryInfo(tempFolderPath).Parent.FullName;
@@ -235,7 +235,7 @@ namespace SaveLockscreenImage
         /// <param name="dest">Destination folder's path</param>
         /// <param name="minFileSize">Minimum filesize to copy</param>
         /// <returns>Temp folder's path</returns>
-        private static string CopyAsset(string source, string dest, long minFileSize)
+        public static string CopyAsset(string source, string dest, long minFileSize)
         {
             var destFolder = new DirectoryInfo(dest);
 
@@ -266,7 +266,7 @@ namespace SaveLockscreenImage
         /// Commence exit sequence
         /// </summary>
         /// <param name="exitTimeout">Exit timeout in seconds</param>
-        private static void ProcessExit(long exitTimeout)
+        public static void ProcessExit(long exitTimeout)
         {
             var count = exitTimeout - 1;
 
