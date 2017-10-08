@@ -5,7 +5,6 @@ using System.Configuration;
 using System.IO;
 using System.Drawing;
 using System.Linq;
-using System.Security.AccessControl;
 using System.Security.Cryptography;
 using System.Threading;
 using Microsoft.VisualBasic.FileIO;
@@ -15,7 +14,7 @@ namespace SaveLockscreenImage
     /// <summary>
     /// This program save Windows 10's lockscreen image
     /// </summary>
-    public class Program
+    public class SaveLockscreenImage
     {
         private const string DEST_FOLDER = "Lockscreen";
 
