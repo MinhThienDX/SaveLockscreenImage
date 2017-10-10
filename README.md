@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/MinhThienDX/save-lockscreen-image.svg?branch=master)](https://travis-ci.org/MinhThienDX/save-lockscreen-image)
+
 # save-lockscreen-image
 A dead simple console app to save Windows 10's lockscreen images  
 Just config your setting in App.config and run the exe file
