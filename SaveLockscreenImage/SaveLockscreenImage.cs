@@ -16,6 +16,7 @@ namespace SaveLockscreenImage
     /// </summary>
     public class SaveLockscreenImage
     {
+        private const string ASSET_PATH = @"Packages\Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy\LocalState\Assets";
         private const string DEST_FOLDER = "Lockscreen";
 
         private static readonly NameValueCollection AppSettings = ConfigurationManager.AppSettings;
@@ -98,10 +99,27 @@ namespace SaveLockscreenImage
             {
                 var appDataLocal = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
                 var assetPath = AppSettings.Get("assetPath");
-                source = Path.Combine(appDataLocal, assetPath);
+
+                // Setting source path
+                if (string.IsNullOrEmpty(assetPath))
+                {
+                    source = Path.Combine(appDataLocal, ASSET_PATH);
+                }
+                else
+                {
+                    source = Path.Combine(appDataLocal, assetPath);
+                }
 
                 // Then save source folder to config
                 var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+
+                // Save asset folder too
+                if (string.IsNullOrEmpty(assetPath))
+                {
+                    config.AppSettings.Settings.Remove("assetPath");
+                    config.AppSettings.Settings.Add("assetPath", ASSET_PATH);
+                }
+
                 config.AppSettings.Settings.Remove("sourceFolder");
                 config.AppSettings.Settings.Add("sourceFolder", source);
                 config.Save(ConfigurationSaveMode.Modified);
