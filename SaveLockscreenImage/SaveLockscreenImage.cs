@@ -49,11 +49,12 @@ namespace SaveLockscreenImage
             catch (Exception e)
             {
                 Console.WriteLine("BUG happened");
-                Console.WriteLine("Start of exception");
+                Console.Write("Start of exception");
                 Console.WriteLine("=================================================================================================");
                 Console.WriteLine(e);
+                Console.Write("End of exception");
                 Console.WriteLine("=================================================================================================");
-                Console.WriteLine("End of exception");
+                Console.Write("Press anykey to exit...");
                 Console.ReadLine();
             }
         }
