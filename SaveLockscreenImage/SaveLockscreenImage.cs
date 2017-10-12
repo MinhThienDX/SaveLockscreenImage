@@ -18,13 +18,14 @@ namespace SaveLockscreenImage
     {
         private const string DEST_FOLDER = "Lockscreen";
 
+        private static readonly NameValueCollection AppSettings = ConfigurationManager.AppSettings;
+
         public static void Main()
         {
             try
             {
-                var appSettings = ConfigurationManager.AppSettings;
-                var source = GetSourcePath(appSettings);
-                var dest = GetDestinationPath(appSettings);
+                var source = GetSourcePath();
+                var dest = GetDestinationPath();
 
                 if (!Directory.Exists(source))
                 {
@@ -32,11 +33,11 @@ namespace SaveLockscreenImage
                 }
                 else
                 {
-                    SaveNow(appSettings, source, dest);
+                    SaveNow(source, dest);
                 }
 
                 Console.Write("Exit sequence commencing");
-                var tmp = appSettings.Get("exitTimeout");
+                var tmp = AppSettings.Get("exitTimeout");
                 long timeout;
                 long.TryParse(tmp, out timeout);
 
@@ -60,23 +61,22 @@ namespace SaveLockscreenImage
         /// <summary>
         /// Save those lockscreen NOW
         /// </summary>
-        /// <param name="appSettings">ConfigurationManager.AppSettings</param>
         /// <param name="source">Source folder path</param>
         /// <param name="dest">Destination folder path</param>
-        public static void SaveNow(NameValueCollection appSettings, string source, string dest)
+        public static void SaveNow(string source, string dest)
         {
             long minFileSize;
-            long.TryParse(appSettings.Get("minFileSizeInByte"), out minFileSize);
+            long.TryParse(AppSettings.Get("minFileSizeInByte"), out minFileSize);
             // Copy files
             var tempFolderPath = CopyAsset(source, dest, minFileSize);
 
             int minImageWidth;
-            int.TryParse(appSettings.Get("minImageWidth"), out minImageWidth);
+            int.TryParse(AppSettings.Get("minImageWidth"), out minImageWidth);
             // Move copied files
             SaveImage(tempFolderPath, minImageWidth);
 
             // Delete duplicate files
-            var deleteDuplicate = appSettings.Get("deleteDuplicate");
+            var deleteDuplicate = AppSettings.Get("deleteDuplicate");
 
             if (deleteDuplicate.Equals("true"))
             {
@@ -87,17 +87,16 @@ namespace SaveLockscreenImage
         /// <summary>
         /// Get source folder path
         /// </summary>
-        /// <param name="appSettings">ConfigurationManager.AppSettings</param>
         /// <returns>Source folder path</returns>
-        public static string GetSourcePath(NameValueCollection appSettings)
+        public static string GetSourcePath()
         {
-            var source = appSettings.Get("sourceFolder");
+            var source = AppSettings.Get("sourceFolder");
 
             // If source path is empty, guess it
             if (string.IsNullOrEmpty(source))
             {
                 var appDataLocal = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                var assetPath = appSettings.Get("assetPath");
+                var assetPath = AppSettings.Get("assetPath");
                 source = Path.Combine(appDataLocal, assetPath);
 
                 // Then save source folder to config
@@ -113,11 +112,10 @@ namespace SaveLockscreenImage
         /// <summary>
         /// Get destination folder path
         /// </summary>
-        /// <param name="appSettings">ConfigurationManager.AppSettings</param>
         /// <returns>Destination folder path</returns>
-        public static string GetDestinationPath(NameValueCollection appSettings)
+        public static string GetDestinationPath()
         {
-            var dest = appSettings.Get("destFolder");
+            var dest = AppSettings.Get("destFolder");
 
             // If destination path is empty, place it on desktop
             if (string.IsNullOrEmpty(dest))
