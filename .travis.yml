@@ -2,7 +2,7 @@ language: csharp
 solution: SaveLockscreenImage.sln
 install:
   - nuget restore SaveLockscreenImage.sln
-  - nuget install xunit.runner.console -Version 2.3.0 -OutputDirectory testrunner
+  - nuget install xunit.runner.console -OutputDirectory testrunner
 script:
   - xbuild /p:Configuration=Release SaveLockscreenImage.sln
-  - mono ./testrunner/xunit.runner.console.2.3.0/tools/net452/xunit.console.exe ./Test/bin/Release/Test.dll
+  - mono ./testrunner/xunit.runner.console.*/tools/net452/xunit.console.exe ./Test/bin/Release/Test.dll
