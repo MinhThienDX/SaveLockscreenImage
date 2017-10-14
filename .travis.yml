@@ -1,4 +1,8 @@
 language: csharp
+branches:
+  only:
+  - master
+  - dev
 solution: SaveLockscreenImage.sln
 install:
   - nuget restore SaveLockscreenImage.sln
