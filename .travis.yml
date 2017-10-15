@@ -6,7 +6,7 @@ branches:
 solution: SaveLockscreenImage.sln
 install:
   - nuget restore SaveLockscreenImage.sln
-  - nuget install xunit.runner.console -OutputDirectory testrunner
+  - nuget install xunit.runner.console
 script:
   - msbuild /p:Configuration=Release SaveLockscreenImage.sln
-  - mono ./testrunner/xunit.runner.console.*/tools/net452/xunit.console.exe ./Test/bin/Release/Test.dll
+  - mono ./xunit.runner.console.*/tools/net452/xunit.console.exe ./Test/bin/Release/Test.dll
