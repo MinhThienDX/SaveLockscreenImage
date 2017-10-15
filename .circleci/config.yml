@@ -15,6 +15,9 @@ jobs:
           name: Install Mono
           command: apt-get -y --allow-unauthenticated install mono-complete
       - run:
+          name: Install wget
+          command: apt-get -y install wget
+      - run:
           name: Download NuGet
           command: wget https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
       - run:
