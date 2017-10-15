@@ -13,7 +13,7 @@ jobs:
           command: apt-get update
       - run:
           name: Install Mono
-          command: apt-get install mono-complete
+          command: apt-get -y install mono-complete
       - run:
           name: Download NuGet
           command: wget https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
