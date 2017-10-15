@@ -9,4 +9,4 @@ install:
   - nuget install xunit.runner.console
 script:
   - msbuild /p:Configuration=Release SaveLockscreenImage.sln
-  - mono ./packages/xunit.runner.console.*/tools/net452/xunit.console.exe ./Test/bin/Release/Test.dll
+  - mono ./xunit.runner.console.*/tools/net452/xunit.console.exe ./Test/bin/Release/Test.dll
