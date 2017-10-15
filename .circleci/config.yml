@@ -10,10 +10,10 @@ jobs:
           command: echo "deb http://download.mono-project.com/repo/debian stretch main" | tee /etc/apt/sources.list.d/mono-xamarin.list
       - run:
           name: Get package list
-          command: sudo apt-get update
+          command: apt-get update
       - run:
           name: Install Mono
-          command: sudo apt-get install mono-complete
+          command: apt-get install mono-complete
       - run:
           name: Download NuGet
           command: wget https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
