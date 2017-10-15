@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/MinhThienDX/SaveLockscreenImage.svg?branch=master)](https://travis-ci.org/MinhThienDX/SaveLockscreenImage)
 [![Build status](https://ci.appveyor.com/api/projects/status/bo8xopcrp6h4jjo8/branch/master?svg=true)](https://ci.appveyor.com/project/MinhThienDX/savelockscreenimage/branch/master)
+[![CircleCI](https://circleci.com/gh/MinhThienDX/SaveLockscreenImage/tree/master.svg?style=svg)](https://circleci.com/gh/MinhThienDX/SaveLockscreenImage/tree/master)
 
 # SaveLockscreenImage
 A dead simple console app to save Windows 10's lockscreen images  
@@ -23,7 +24,7 @@ Deleted files will go to Recycle Bin
 - [x] Publish this ~~somewhere~~ to GitHub for people to use
 - [x] Add Travis CI
 - [x] Add AppVeyor CI
-- [ ] Add CircleCI
+- [x] Add CircleCI (lack auto testing)
 - [x] Add some testing
 - [ ] Complete testing
 - [ ] Add website for this solution
