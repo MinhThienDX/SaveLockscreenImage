@@ -9,6 +9,9 @@ jobs:
           name: Make mono-xamarin.list
           command: echo "deb http://download.mono-project.com/repo/debian stretch main" | tee /etc/apt/sources.list.d/mono-xamarin.list
       - run:
+          name: Update key for packages
+          command: apt-key update
+      - run:
           name: Get package list
           command: apt-get update
       - run:
