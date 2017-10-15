@@ -25,7 +25,7 @@ jobs:
           command: mono nuget.exe restore SaveLockscreenImage.sln
       - run:
           name: Build with MSBuild
-          command: msbuild /p:Configuration=Release SaveLockscreenImage.sln
+          command: msbuild /p:Configuration=Release /verbosity:minimal SaveLockscreenImage.sln
   #test:
 #dependencies:
 #  override:
