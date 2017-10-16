@@ -3,7 +3,7 @@ jobs:
   build:
     docker:
       #- image: debian:stretch
-      - image: mono:slim
+      - image: mono:5
     steps:
       - checkout
       - run:
