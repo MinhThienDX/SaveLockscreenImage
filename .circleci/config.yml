@@ -6,17 +6,8 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Get package list
-          command: apt-get update
-      - run:
-          name: Install wget
-          command: apt-get -y install wget
-      - run:
-          name: Download NuGet
-          command: wget https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
-      - run:
           name: NuGet restore
-          command: mono nuget.exe restore SaveLockscreenImage.sln
+          command: nuget restore SaveLockscreenImage.sln
       - run:
           name: Build with MSBuild
           command: msbuild /p:Configuration=Release /verbosity:minimal SaveLockscreenImage.sln
