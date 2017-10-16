@@ -2,19 +2,12 @@ version: 2
 jobs:
   build:
     docker:
-      #- image: debian:stretch
       - image: mono:5
     steps:
       - checkout
       - run:
-          name: Make mono-xamarin.list
-          command: echo "deb http://download.mono-project.com/repo/debian stretch main" | tee /etc/apt/sources.list.d/mono-xamarin.list
-      - run:
           name: Get package list
           command: apt-get update
-      #- run:
-      #    name: Install Mono
-      #    command: apt-get -y --allow-unauthenticated install mono-complete
       - run:
           name: Install wget
           command: apt-get -y install wget
