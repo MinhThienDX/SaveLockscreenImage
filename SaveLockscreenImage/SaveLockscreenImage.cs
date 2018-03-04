@@ -25,6 +25,7 @@ namespace SaveLockscreenImage
         {
             try
             {
+                int imageCount = 0;
                 var source = GetSourcePath();
                 var dest = GetDestinationPath();
 
@@ -34,13 +35,17 @@ namespace SaveLockscreenImage
                 }
                 else
                 {
-                    SaveNow(source, dest);
+                    imageCount = SaveNow(source, dest);
+                }
+
+                if (imageCount == 0)
+                {
+                    return;
                 }
 
                 Console.Write("Exit sequence commencing");
                 var tmp = AppSettings.Get("exitTimeout");
-                long timeout;
-                long.TryParse(tmp, out timeout);
+                long.TryParse(tmp, out long timeout);
 
                 if (timeout > 1)
                 {
@@ -65,17 +70,21 @@ namespace SaveLockscreenImage
         /// </summary>
         /// <param name="source">Source folder path</param>
         /// <param name="dest">Destination folder path</param>
-        public static void SaveNow(string source, string dest)
+        /// <returns>Numnber of images saved</returns>
+        public static int SaveNow(string source, string dest)
         {
-            long minFileSize;
-            long.TryParse(AppSettings.Get("minFileSizeInByte"), out minFileSize);
+            long.TryParse(AppSettings.Get("minFileSizeInByte"), out long minFileSize);
             // Copy files
             var tempFolderPath = CopyAsset(source, dest, minFileSize);
 
-            int minImageWidth;
-            int.TryParse(AppSettings.Get("minImageWidth"), out minImageWidth);
+            int.TryParse(AppSettings.Get("minImageWidth"), out int minImageWidth);
             // Move copied files
-            SaveImage(tempFolderPath, minImageWidth);
+            int imageCount = SaveImage(tempFolderPath, minImageWidth);
+
+            if (imageCount == 0)
+            {
+                return imageCount;
+            }
 
             // Delete duplicate files
             var deleteDuplicate = AppSettings.Get("deleteDuplicate");
@@ -84,6 +93,8 @@ namespace SaveLockscreenImage
             {
                 DeleteDuplicateImage(dest);
             }
+
+            return imageCount;
         }
 
         /// <summary>
@@ -211,7 +222,8 @@ namespace SaveLockscreenImage
         /// </summary>
         /// <param name="tempFolderPath">Temp folder's path</param>
         /// <param name="minImageWidth">Minimum image's width to process</param>
-        public static void SaveImage(string tempFolderPath, int minImageWidth)
+        /// <returns>Numnber of images saved</returns>
+        public static int SaveImage(string tempFolderPath, int minImageWidth)
         {
             string[] fileList = Directory.GetFiles(tempFolderPath);
             var parentFolderPath = new DirectoryInfo(tempFolderPath).Parent.FullName;
@@ -242,6 +254,7 @@ namespace SaveLockscreenImage
             // Delete temp folder
             Directory.Delete(tempFolderPath, true);
             Console.WriteLine("Finish save " + fileCount + " image(s) to destination folder");
+            return fileCount;
         }
 
         /// <summary>
