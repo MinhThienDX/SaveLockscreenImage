@@ -2,27 +2,12 @@ version: 2
 jobs:
   build:
     docker:
-      - image: debian:stretch
+      - image: mono:5
     steps:
       - checkout
       - run:
-          name: Make mono-xamarin.list
-          command: echo "deb http://download.mono-project.com/repo/debian stretch main" | tee /etc/apt/sources.list.d/mono-xamarin.list
-      - run:
-          name: Get package list
-          command: apt-get update
-      - run:
-          name: Install Mono
-          command: apt-get -y --allow-unauthenticated install mono-complete
-      - run:
-          name: Install wget
-          command: apt-get -y install wget
-      - run:
-          name: Download NuGet
-          command: wget https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
-      - run:
           name: NuGet restore
-          command: mono nuget.exe restore SaveLockscreenImage.sln
+          command: nuget restore SaveLockscreenImage.sln
       - run:
           name: Build with MSBuild
           command: msbuild /p:Configuration=Release /verbosity:minimal SaveLockscreenImage.sln
