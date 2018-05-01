@@ -19,12 +19,12 @@ Only files with **matching size and MD5 hash** will be deleted
 Deleted files will go to Recycle Bin
 
 #### TODO
-- [ ] Check `minFileSizeInByte` with value 0
-- [ ] Check `minImageWidth` with value 0
-- [x] Publish this ~~somewhere~~ to GitHub for people to use
+- [x] Check `minFileSizeInByte` with value 0 (Add image file check in revision [18685ca](https://github.com/MinhThienDX/SaveLockscreenImage/commit/18685cac43a22b0b2c796b9444f501e18b4b85a0))
+- [x] Check `minImageWidth` with value 0 (No error, just images with wrong file extension)
+- [x] Publish to GitHub
 - [x] Add Travis CI
 - [x] Add AppVeyor CI
 - [x] Add CircleCI (lack auto testing)
 - [x] Add some testing
 - [ ] Complete testing
-- [ ] Add website for this solution
+- [ ] Add website
