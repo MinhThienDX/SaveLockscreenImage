@@ -231,7 +231,17 @@ namespace SaveLockscreenImage
 
             foreach (var s in fileList)
             {
-                var img = Image.FromFile(s);
+                Image img = null;
+
+                try
+                {
+                    img = Image.FromFile(s);
+                }
+                catch (Exception)
+                {
+                    // Non-image file
+                    continue;
+                }
 
                 // Check image's width
                 if (img.Width >= minImageWidth)
