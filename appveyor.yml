@@ -1,6 +1,4 @@
 image: Visual Studio 2017
-install:
-- set PATH=C:\Program Files (x86)\MSBuild\15.0\Bin;%PATH%
 
 version: 1.0.{build}
 branches:
@@ -15,8 +13,3 @@ before_build:
 configuration: Release
 build:
   verbosity: minimal
-# Disable automatic tests
-test: off
-# Run custom test scripts instead of automatic tests
-test_script:
-  - cmd: %xunit20%\xunit.console \Test\bin\Release\Test.dll -appveyor
