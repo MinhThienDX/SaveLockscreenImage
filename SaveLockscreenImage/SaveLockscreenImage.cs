@@ -19,6 +19,10 @@ namespace SaveLockscreenImage
         private const string ASSET_PATH = @"Packages\Microsoft.Windows.ContentDeliveryManager_cw5n1h2txyewy\LocalState\Assets";
         private const string DEST_FOLDER = "Lockscreen";
 
+        /// <summary>
+        /// Temp folder's path
+        /// </summary>
+        private static string tempFolderPath;
         private static readonly NameValueCollection AppSettings = ConfigurationManager.AppSettings;
 
         public static void Main()
@@ -38,6 +42,9 @@ namespace SaveLockscreenImage
                     imageCount = SaveNow(source, dest);
                 }
 
+                // Delete temp folder
+                Directory.Delete(tempFolderPath, true);
+
                 if (imageCount == 0)
                 {
                     return;
@@ -54,6 +61,9 @@ namespace SaveLockscreenImage
             }
             catch (Exception e)
             {
+                // Delete temp folder
+                Directory.Delete(tempFolderPath, true);
+
                 Console.WriteLine("BUG happened");
                 Console.Write("Start of exception");
                 Console.WriteLine("=================================================================================================");
@@ -75,11 +85,11 @@ namespace SaveLockscreenImage
         {
             long.TryParse(AppSettings.Get("minFileSizeInByte"), out long minFileSize);
             // Copy files
-            var tempFolderPath = CopyAsset(source, dest, minFileSize);
+            CopyAsset(source, dest, minFileSize);
 
             int.TryParse(AppSettings.Get("minImageWidth"), out int minImageWidth);
             // Move copied files
-            int imageCount = SaveImage(tempFolderPath, minImageWidth);
+            int imageCount = SaveImage(minImageWidth);
 
             if (imageCount == 0)
             {
@@ -220,10 +230,9 @@ namespace SaveLockscreenImage
         /// <summary>
         /// Save images to destination folder
         /// </summary>
-        /// <param name="tempFolderPath">Temp folder's path</param>
         /// <param name="minImageWidth">Minimum image's width to process</param>
         /// <returns>Numnber of images saved</returns>
-        public static int SaveImage(string tempFolderPath, int minImageWidth)
+        public static int SaveImage(int minImageWidth)
         {
             string[] fileList = Directory.GetFiles(tempFolderPath);
             var parentFolderPath = new DirectoryInfo(tempFolderPath).Parent.FullName;
@@ -261,8 +270,6 @@ namespace SaveLockscreenImage
                 }
             }
 
-            // Delete temp folder
-            Directory.Delete(tempFolderPath, true);
             Console.WriteLine("Finish save " + fileCount + " image(s) to destination folder");
             return fileCount;
         }
@@ -274,13 +281,13 @@ namespace SaveLockscreenImage
         /// <param name="dest">Destination folder's path</param>
         /// <param name="minFileSize">Minimum filesize to copy</param>
         /// <returns>Temp folder's path</returns>
-        public static string CopyAsset(string source, string dest, long minFileSize)
+        public static void CopyAsset(string source, string dest, long minFileSize)
         {
             var destFolder = new DirectoryInfo(dest);
 
             // Create temp folder inside destination folder
             var tempFolder = destFolder.CreateSubdirectory(DateTime.Now.Ticks.ToString());
-            var tempFolderPath = tempFolder.FullName;
+            tempFolderPath = tempFolder.FullName;
             string[] fileList = Directory.GetFiles(source);
             var fileCount = 0;
 
@@ -298,7 +305,6 @@ namespace SaveLockscreenImage
             }
 
             Console.WriteLine("Finish copy " + fileCount + " file(s) from asset folder");
-            return tempFolderPath;
         }
 
         /// <summary>
