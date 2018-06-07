@@ -99,7 +99,7 @@ namespace SaveLockscreenImage
             // Delete duplicate files
             var deleteDuplicate = AppSettings.Get("deleteDuplicate");
 
-            if (deleteDuplicate.Equals("true"))
+            if ("true".Equals(deleteDuplicate))
             {
                 DeleteDuplicateImage(dest);
             }
