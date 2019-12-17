@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: mono:5
+      - image: mono:6
     steps:
       - checkout
       - run:
