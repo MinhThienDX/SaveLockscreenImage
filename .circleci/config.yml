@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: mcr.microsoft.com/dotnet/core/sdk:latest
+      - image: mono:6
     steps:
       - checkout
       - run:
