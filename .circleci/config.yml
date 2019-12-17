@@ -6,11 +6,11 @@ jobs:
     steps:
       - checkout
       - run:
-          name: NuGet restore
-          command: nuget restore SaveLockscreenImage.sln
+          name: Restore packages
+          command: dotnet restore
       - run:
-          name: Build with MSBuild
-          command: msbuild /p:Configuration=Release /verbosity:minimal SaveLockscreenImage.sln
+          name: Build
+          command: dotnet build --configuration Release --verbosity minimal SaveLockscreenImage.sln
   #test:
 #dependencies:
 #  override:
